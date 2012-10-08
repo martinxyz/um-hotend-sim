@@ -22,11 +22,11 @@ for i, time in enumerate(t):
     else:
         c1 = 0.00167  # heater strength
         c2 = 0.000278 # cooldown strength
-        #if time > 7*60: c2 *= 1.42 # fan turned on, stronger cooldown
+        if time > 7*60: c2 *= 1.42 # fan turned on, stronger cooldown
         T_measurement = 9.8 # measurement delay (time constant, seconds)
         c3 = 1 - exp(-dtime/(T_measurement/number_of_delay_elements))
         power = real_power[i] 
-        if time > 7*60: power = 127
+        #if time > 7*60: power = 127
         heater += c1 * power # energy pumped in
         heater += c2 * (room_temp - heater) # energy lost to room
         for j in range(number_of_delay_elements):
@@ -43,8 +43,8 @@ for i, time in enumerate(t):
 
 plot(t, real_measured, label='real: measured')
 plot(t, sim_measured, label='sim: measured')
-#plot(t, sim_heater, label='sim: heater')
-plot(t, real_target, label='real: target')
+plot(t, sim_heater, label='sim: heater')
+#plot(t, real_target, label='real: target')
 plot(t, real_power, label='real: heater power')
 xlabel('seconds')
 

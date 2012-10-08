@@ -12,7 +12,7 @@ real_target = data[:,2]
 real_power = data[:,3]
 
 physical_power_limit = 127
-longterm_power_limit = physical_power_limit * 0.4
+longterm_power_limit = physical_power_limit * 0.40
 max_budget = physical_power_limit / dtime * 30 # 30 seconds of full-power
 budget = max_budget
 energy_budget = [] # seconds of full-power
@@ -34,6 +34,7 @@ for i, time in enumerate(t):
         T_measurement = 9.8 # measurement delay (time constant, seconds)
         c3 = 1 - exp(-dtime/(T_measurement/number_of_delay_elements))
         power = real_power[i] 
+        if time > 7*60: power = 127
 
         budget += longterm_power_limit
         if budget < power: power = budget
@@ -41,7 +42,6 @@ for i, time in enumerate(t):
         if budget > max_budget: budget = max_budget
         if budget < 0: budget = 0
 
-        #if time > 7*60: power = 127
         heater += c1 * power # energy pumped in
         heater += c2 * (room_temp - heater) # energy lost to room
 
@@ -67,7 +67,8 @@ plot(t, sim_measured, label='sim: measured')
 #plot(t, sim_heater, label='sim: heater')
 plot(t, real_target, label='real: target')
 plot(t, real_power, label='real: heater power')
-plot(t, array(energy_budget)/500, label='energy budget')
+energy_budget = array(energy_budget)
+plot(t, energy_budget/energy_budget.max()*100, label='energy budget')
 xlabel('seconds')
 
 T_room = 24.9
